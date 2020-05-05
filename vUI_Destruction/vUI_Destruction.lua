@@ -12,7 +12,7 @@ local ImmolateName = GetSpellInfo(157736)
 
 local GetTime = GetTime
 local format = format
-local UnitAuraByName = UnitAuraByName
+local FindAuraByName = AuraUtil.FindAuraByName
 local Name, Count, Duration, Expiration, _
 
 function Destruction:OnUpdate(elapsed)
@@ -36,7 +36,7 @@ end
 
 function Destruction:OnEvent(event, unit)
 	if (unit == "player") then
-		Name, _, Count, _, Duration, Expiration = UnitAuraByName("player", BackdraftName)
+		Name, _, Count, _, Duration, Expiration = FindAuraByName(BackdraftName, "player")
 		
 		if Expiration then
 			self.BackdraftRemaining = Expiration - GetTime()
@@ -51,7 +51,7 @@ function Destruction:OnEvent(event, unit)
 			self.BackdraftBar.Time:SetText("")
 		end
 	elseif (unit == "target") then
-		Name, _, Count, _, Duration, Expiration = UnitDebuffByName("target", ImmolateName, "PLAYER")
+		Name, _, Count, _, Duration, Expiration = FindAuraByName(ImmolateName, "target", "PLAYER")
 		
 		if Expiration then
 			self.ImmolateRemaining = Expiration - GetTime()
@@ -73,57 +73,57 @@ function Destruction:CreateBars()
 	-- Backdraft bar
 	self.BackdraftBar = CreateFrame("StatusBar", nil, UIParent)
 	self.BackdraftBar:SetStatusBarTexture(Media:GetTexture(Settings["ui-widget-texture"]))
-	self.BackdraftBar:SetStatusBarColorHex("E0392B")
-	self.BackdraftBar:SetScaledSize(Settings["unitframes-player-width"] - 2, 20)
-	self.BackdraftBar:SetScaledPoint("BOTTOM", vUI.UnitFrames["player"].ClassPower, "TOP", 0, 0)
+	self.BackdraftBar:SetStatusBarColor(vUI:HexToRGB("E0392B"))
+	self.BackdraftBar:SetSize(Settings["unitframes-player-width"] - 2, 20)
+	self.BackdraftBar:SetPoint("BOTTOM", vUI.UnitFrames["player"].ClassPower, "TOP", 0, 0)
 	self.BackdraftBar:SetMinMaxValues(0, 1)
 	self.BackdraftBar:SetValue(0)
 	
 	self.BackdraftBar.BG = self.BackdraftBar:CreateTexture(nil, "ARTWORK")
 	self.BackdraftBar.BG:SetAllPoints(self.BackdraftBar)
 	self.BackdraftBar.BG:SetTexture(Media:GetTexture(Settings["ui-widget-texture"]))
-	self.BackdraftBar.BG:SetVertexColorHex("E0392B")
+	self.BackdraftBar.BG:SetVertexColor(vUI:HexToRGB("E0392B"))
 	self.BackdraftBar.BG:SetAlpha(0.2)
 	
 	self.BackdraftBar.Count = self.BackdraftBar:CreateFontString(nil, "OVERLAY")
-	self.BackdraftBar.Count:SetFontInfo(Settings["ui-widget-font"], Settings["ui-font-size"])
-	self.BackdraftBar.Count:SetScaledPoint("LEFT", self.BackdraftBar, 3, 0)
+	vUI:SetFontInfo(self.BackdraftBar.Count, Settings["ui-widget-font"], Settings["ui-font-size"])
+	self.BackdraftBar.Count:SetPoint("LEFT", self.BackdraftBar, 3, 0)
 	self.BackdraftBar.Count:SetJustifyH("LEFT")
 	
 	self.BackdraftBar.Time = self.BackdraftBar:CreateFontString(nil, "OVERLAY")
-	self.BackdraftBar.Time:SetFontInfo(Settings["ui-widget-font"], Settings["ui-font-size"])
-	self.BackdraftBar.Time:SetScaledPoint("RIGHT", self.BackdraftBar, -3, 0)
+	vUI:SetFontInfo(self.BackdraftBar.Time, Settings["ui-widget-font"], Settings["ui-font-size"])
+	self.BackdraftBar.Time:SetPoint("RIGHT", self.BackdraftBar, -3, 0)
 	self.BackdraftBar.Time:SetJustifyH("RIGHT")
 	
 	self.BackdraftBar.BG2 = self.BackdraftBar:CreateTexture(nil, "BORDER")
-	self.BackdraftBar.BG2:SetScaledPoint("TOPLEFT", self.BackdraftBar, -1, 1)
-	self.BackdraftBar.BG2:SetScaledPoint("BOTTOMRIGHT", self.BackdraftBar, 1, -1)
+	self.BackdraftBar.BG2:SetPoint("TOPLEFT", self.BackdraftBar, -1, 1)
+	self.BackdraftBar.BG2:SetPoint("BOTTOMRIGHT", self.BackdraftBar, 1, -1)
 	self.BackdraftBar.BG2:SetTexture(Media:GetTexture("Blank"))
 	self.BackdraftBar.BG2:SetVertexColor(0, 0, 0)
 	
 	-- Immolate bar
 	self.ImmolateBar = CreateFrame("StatusBar", nil, UIParent)
 	self.ImmolateBar:SetStatusBarTexture(Media:GetTexture(Settings["ui-widget-texture"]))
-	self.ImmolateBar:SetStatusBarColorHex("FFA000")
-	self.ImmolateBar:SetScaledSize(Settings["unitframes-player-width"] - 2, 20)
-	self.ImmolateBar:SetScaledPoint("BOTTOM", self.BackdraftBar, "TOP", 0, 1)
+	self.ImmolateBar:SetStatusBarColor(vUI:HexToRGB("FFA000"))
+	self.ImmolateBar:SetSize(Settings["unitframes-player-width"] - 2, 20)
+	self.ImmolateBar:SetPoint("BOTTOM", self.BackdraftBar, "TOP", 0, 1)
 	self.ImmolateBar:SetMinMaxValues(0, 1)
 	self.ImmolateBar:SetValue(0)
 	
 	self.ImmolateBar.BG = self.ImmolateBar:CreateTexture(nil, "ARTWORK")
 	self.ImmolateBar.BG:SetAllPoints(self.ImmolateBar)
 	self.ImmolateBar.BG:SetTexture(Media:GetTexture(Settings["ui-widget-texture"]))
-	self.ImmolateBar.BG:SetVertexColorHex("FFA000")
+	self.ImmolateBar.BG:SetVertexColor(vUI:HexToRGB("FFA000"))
 	self.ImmolateBar.BG:SetAlpha(0.2)
 	
 	self.ImmolateBar.Time = self.ImmolateBar:CreateFontString(nil, "OVERLAY")
-	self.ImmolateBar.Time:SetFontInfo(Settings["ui-widget-font"], Settings["ui-font-size"])
-	self.ImmolateBar.Time:SetScaledPoint("RIGHT", self.ImmolateBar, -3, 0)
+	vUI:SetFontInfo(self.ImmolateBar.Time, Settings["ui-widget-font"], Settings["ui-font-size"])
+	self.ImmolateBar.Time:SetPoint("RIGHT", self.ImmolateBar, -3, 0)
 	self.ImmolateBar.Time:SetJustifyH("RIGHT")
 	
 	self.ImmolateBar.BG2 = self.ImmolateBar:CreateTexture(nil, "BORDER")
-	self.ImmolateBar.BG2:SetScaledPoint("TOPLEFT", self.ImmolateBar, -1, 1)
-	self.ImmolateBar.BG2:SetScaledPoint("BOTTOMRIGHT", self.ImmolateBar, 1, -1)
+	self.ImmolateBar.BG2:SetPoint("TOPLEFT", self.ImmolateBar, -1, 1)
+	self.ImmolateBar.BG2:SetPoint("BOTTOMRIGHT", self.ImmolateBar, 1, -1)
 	self.ImmolateBar.BG2:SetTexture(Media:GetTexture("Blank"))
 	self.ImmolateBar.BG2:SetVertexColor(0, 0, 0)
 	
@@ -137,8 +137,8 @@ function Destruction:CreateBars()
 	self.ImmolateBar.Refresh:SetStatusBarColor(1, 1, 1, 0)
 	
 	self.ImmolateBar.RefreshSpark = self.ImmolateBar.Refresh:CreateTexture(nil, "OVERLAY")
-	self.ImmolateBar.RefreshSpark:SetScaledSize(1, 20)
-	self.ImmolateBar.RefreshSpark:SetScaledPoint("RIGHT", self.ImmolateBar.Refresh:GetStatusBarTexture(), 0, 0)
+	self.ImmolateBar.RefreshSpark:SetSize(1, 20)
+	self.ImmolateBar.RefreshSpark:SetPoint("RIGHT", self.ImmolateBar.Refresh:GetStatusBarTexture(), 0, 0)
 	self.ImmolateBar.RefreshSpark:SetColorTexture(0, 0, 0)
 end
 
